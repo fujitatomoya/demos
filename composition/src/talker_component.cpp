@@ -18,6 +18,7 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include <cinttypes>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -30,8 +31,8 @@ namespace composition
 // Create a Talker "component" that subclasses the generic rclcpp::Node base class.
 // Components get built into shared libraries and as such do not write their own main functions.
 // The process using the component's shared library will instantiate the class as a ROS node.
-Talker::Talker(const rclcpp::NodeOptions & options)
-: Node("talker", options), count_(0)
+Talker::Talker(rclcpp::NodeOptions options)
+: Node("talker", options.use_intra_process_comms(true)), count_(0)
 {
   // Create a publisher of "std_mgs/String" messages on the "chatter" topic.
   pub_ = create_publisher<std_msgs::msg::String>("chatter", 10);
@@ -44,7 +45,8 @@ void Talker::on_timer()
 {
   auto msg = std::make_unique<std_msgs::msg::String>();
   msg->data = "Hello World: " + std::to_string(++count_);
-  RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", msg->data.c_str());
+  printf("Publishing: '%s' and address: 0x%" PRIXPTR "\n",
+         msg->data.c_str(), reinterpret_cast<std::uintptr_t>(msg.get()));
   std::flush(std::cout);
 
   // Put the message into a queue to be processed by the middleware.

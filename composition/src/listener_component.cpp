@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <memory>
+#include <cinttypes>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -26,15 +27,16 @@ namespace composition
 // Create a Listener "component" that subclasses the generic rclcpp::Node base class.
 // Components get built into shared libraries and as such do not write their own main functions.
 // The process using the component's shared library will instantiate the class as a ROS node.
-Listener::Listener(const rclcpp::NodeOptions & options)
-: Node("listener", options)
+Listener::Listener(rclcpp::NodeOptions options)
+: Node("listener", options.use_intra_process_comms(true))
 {
   // Create a callback function for when messages are received.
   // Variations of this function also exist using, for example, UniquePtr for zero-copy transport.
   auto callback =
     [this](const typename std_msgs::msg::String::SharedPtr msg) -> void
     {
-      RCLCPP_INFO(this->get_logger(), "I heard: [%s]", msg->data.c_str());
+      printf("I heard: [%s] and address: 0x%" PRIXPTR "\n",
+             msg->data.c_str(), reinterpret_cast<std::uintptr_t>(msg.get()));
       std::flush(std::cout);
     };
 

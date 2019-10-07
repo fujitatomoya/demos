@@ -26,7 +26,7 @@ class Talker : public rclcpp::Node
 {
 public:
   COMPOSITION_PUBLIC
-  explicit Talker(const rclcpp::NodeOptions & options);
+  explicit Talker(rclcpp::NodeOptions options);
 
 protected:
   void on_timer();
