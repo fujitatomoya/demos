@@ -15,6 +15,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
 
+#include "std_msgs/msg/int64.hpp"
 #include "std_msgs/msg/string.hpp"
 
 #include "demo_nodes_cpp/visibility_control.h"
@@ -38,15 +39,23 @@ public:
       {
         RCLCPP_INFO(this->get_logger(), "I heard: [%s]", msg->data.c_str());
       };
+    auto callback2 =
+      [this](const std_msgs::msg::Int64::SharedPtr msg) -> void
+      {
+        RCLCPP_INFO(this->get_logger(), "I also heard: [%ld]", msg->data);
+      };
+
     // Create a subscription to the topic which can be matched with one or more compatible ROS
     // publishers.
     // Note that not all publishers on the same topic with the same type will be compatible:
     // they must have compatible Quality of Service policies.
     sub_ = create_subscription<std_msgs::msg::String>("chatter", 10, callback);
+    sub2_ = create_subscription<std_msgs::msg::Int64>("chatter", 10, callback2);
   }
 
 private:
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_;
+  rclcpp::Subscription<std_msgs::msg::Int64>::SharedPtr sub2_;
 };
 
 }  // namespace demo_nodes_cpp
