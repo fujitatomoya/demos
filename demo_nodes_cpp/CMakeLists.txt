@@ -149,6 +149,12 @@ create_demo_library("demo_nodes_cpp::ContentFilteringPublisher" content_filterin
 create_demo_library("demo_nodes_cpp::ContentFilteringSubscriber" content_filtering_subscriber
   FILES src/topics/content_filtering_subscriber.cpp
   DEPENDENCIES rclcpp::rclcpp rclcpp_components::component rcpputils::rcpputils ${std_msgs_TARGETS})
+create_demo_library("demo_nodes_cpp::RateControlPublisher" rate_control_publisher
+  FILES src/topics/rate_control_publisher.cpp
+  DEPENDENCIES rclcpp::rclcpp rclcpp_components::component ${std_msgs_TARGETS})
+create_demo_library("demo_nodes_cpp::RateControlSubscriber" rate_control_subscriber
+  FILES src/topics/rate_control_subscriber.cpp
+  DEPENDENCIES rclcpp::rclcpp rclcpp_components::component rcpputils::rcpputils ${std_msgs_TARGETS})
 create_demo_library("demo_nodes_cpp::Talker" talker
   FILES src/topics/talker.cpp
   DEPENDENCIES rclcpp::rclcpp rclcpp_components::component ${std_msgs_TARGETS})
