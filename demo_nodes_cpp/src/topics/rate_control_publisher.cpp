@@ -26,6 +26,9 @@
 
 namespace demo_nodes_cpp
 {
+// Rate-Control const parameters, ring counter starts 0 to 9.
+// This is pre-process approach in publisher side with content filtered topic.
+constexpr int64_t rate_control_modulo = 10;
 
 // Create a RateControlPublisher class that subclasses the generic rclcpp::Node base class.
 // The main function below will instantiate the class as a ROS node.
@@ -41,7 +44,9 @@ public:
       [this]() -> void
       {
         msg_ = std::make_unique<std_msgs::msg::Int64>();
-        msg_->data = counter_++;
+        msg_->data = counter_;
+        counter_++;
+        counter_ = counter_ % rate_control_modulo;
         RCLCPP_INFO(this->get_logger(), "Publishing: '%ld'", msg_->data);
         // Put the message into a queue to be processed by the middleware.
         // This call is non-blocking.

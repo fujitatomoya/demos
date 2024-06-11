@@ -25,7 +25,8 @@
 
 namespace demo_nodes_cpp
 {
-// Rate-Control const parameters, 0 division remainder, 5 divisor (slower rate)
+// Rate-Control const parameters to control the rate on subscription
+// Message only delivered if index is 0 or 5, that means frequency is one-fifth.
 constexpr std::array<int64_t, 2> RATE_CONTROL_CONFIG {0, 5};
 
 // Create a RateControlSubscriber class that subclasses the generic rclcpp::Node base class.
@@ -49,7 +50,7 @@ public:
     // Initialize a subscription with a content filter to receive data with
     // one-fifth 1/5 frequency on the subscription. (2 Hz but publisher 10 Hz)
     rclcpp::SubscriptionOptions sub_options;
-    sub_options.content_filter_options.filter_expression = "%0 == data % %1";
+    sub_options.content_filter_options.filter_expression = "%0 = data OR %1 = data";
     sub_options.content_filter_options.expression_parameters = {
       std::to_string(RATE_CONTROL_CONFIG[0]),
       std::to_string(RATE_CONTROL_CONFIG[1])
